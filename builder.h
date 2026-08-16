@@ -11,13 +11,14 @@ typedef struct {
     int exec_mode;
     
     // Key Derivation Configuration
-    int key_derivation_mode; // 1: Static Hash, 2: Proof-of-Work
+    int key_derivation_mode; // 1: Static Hash, 2: Proof-of-Work, 3: External C2 Key Retrieval
     char key_input[64];      // Stores Passphrase or Seed
     int pow_difficulty;      // PoW Difficulty Level (1-3)
 
     // --- Dynamic Network Parameters ---
     char net_ip[64];
     char net_host[128];
+    char net_path[64];       // URI path / endpoint for network queries (e.g., C2 key retrieval)
     int net_port;
 } StageConfig;
 

