@@ -1,4 +1,4 @@
-/* include/hammering.h - System Call and Memory Allocation Stress Routines */
+/* include/hammering.h - Enhanced System Call and Memory Allocation Stress Routines */
 #ifndef HAMMERING_H
 #define HAMMERING_H
 
@@ -9,64 +9,59 @@
 #include <sys/utsname.h>
 #include <time.h>
 #include <pwd.h>
+#include <string.h>
 
 /**
- * Executes repeated high-frequency benign system calls to flood API monitoring 
- * buffers and generate analysis overhead.
+ * Executes high-frequency benign system calls using an internal multiplier loop
+ * to saturate API monitoring buffers and generate sustained analysis overhead.
  *
- * @param count Number of iterations for each system call sequence.
+ * @param count Base iteration count multiplied internally (1000x) for extended runtime.
  */
-static inline void execute_api_hammering(int count) {
+static inline void execute_api_hammering(unsigned long long count) {
     struct utsname name;
-    struct passwd *pw;
     uid_t uid;
     volatile time_t now;
-    volatile pid_t pid;
-    volatile pid_t ppid;
-    volatile char *env_val;
 
-    for (int i = 0; i < count; i++) {
-        // 1. Host system information querying
-        uname(&name);
+    // Internal nested multiplier loop ensures long-term execution and prevents premature termination
+    for (unsigned long long i = 0; i < count; i++) {
+        for (int j = 0; j < 1000; j++) {
+            // Query host architecture and OS properties
+            uname(&name);
 
-        // 2. User account context retrieval
-        uid = getuid();
-        pw = getpwuid(uid);
-        (void)pw;
+            // Fetch process user identity
+            uid = getuid();
 
-        // 3. System time state sampling
-        now = time(NULL);
-        (void)now;
+            // Sample system clock timestamp
+            now = time(NULL);
 
-        // 4. Process identifier resolution
-        pid = getpid();
-        ppid = getppid();
-        (void)pid;
-        (void)ppid;
-
-        // 5. Environment variable lookup
-        env_val = getenv("NON_EXISTENT_VARIABLE_FOR_HAMMERING");
-        (void)env_val;
+            // Prevent compiler dead-code elimination (-O2/-O3)
+            (void)uid;
+            (void)now;
+        }
     }
 }
 
 /**
- * Performs dynamic heap memory allocations and releases of varying block sizes, 
- * writing to memory pages to force actual OS memory page mapping.
+ * Performs continuous heap allocation across varying block sizes and writes across
+ * 4KB memory page boundaries. This forces OS-level physical page faulting and 
+ * completely bypasses fast heap caching mechanisms (tcache/fastbins).
  *
- * @param count Number of allocation and free iterations to execute.
+ * @param count Number of allocation and page-dirtying cycles to perform.
  */
-static inline void memory_hammering(long long count) {
+static inline void memory_hammering(unsigned long long count) {
     volatile unsigned char dummy = 0;
 
-    for (long long i = 0; i < count; i++) {
-        // Dynamic block size computation to bypass fast heap caching mechanisms
-        size_t alloc_size = (size_t)((i % 2048) + 128);
-        void *p = malloc(alloc_size);
+    for (unsigned long long i = 0; i < count; i++) {
+        // Allocate larger blocks (64 KB to 2 MB) to bypass standard heap caching thresholds
+        size_t alloc_size = ((i % 32) + 1) * 65536; 
+        char *p = (char*)malloc(alloc_size);
 
         if (p) {
-            ((char*)p)[0] = (char)(i & 0xFF);
-            dummy ^= ((char*)p)[0]; // Read-write access to prevent compiler dead-code elimination
+            // Touch memory at 4096-byte (4KB) intervals to force true physical page mapping (page faults)
+            for (size_t offset = 0; offset < alloc_size; offset += 4096) {
+                p[offset] = (char)((i + offset) & 0xFF);
+                dummy ^= p[offset]; // Prevent dead-code elimination via state accumulation
+            }
             free(p);
         }
     }
