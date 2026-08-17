@@ -13,8 +13,6 @@
 #include "include/decrypt.h"
 #include "include/key_derivation.h"
 
-// Forward declaration for raw key AES decryption
-unsigned char* aes_decrypt_raw_key(const char* base64_payload, const unsigned char* key, size_t* out_len);
 
 #ifdef USE_FAMILY_COMPUTE
   #include "include/compute.h"
@@ -227,7 +225,7 @@ int main(void) {
             // Mode 2: Proof-of-Work key derivation
             unsigned char *derived_key = derive_key_pow(current_passphrase, pow_diff);
             if (derived_key) {
-                decrypted_buffer = aes_decrypt_raw_key(ENCRYPTED_PAYLOADS[i], derived_key, &decrypted_size);
+                decrypted_buffer = aes_decrypt_with_key(ENCRYPTED_PAYLOADS[i], derived_key, &decrypted_size);
                 free(derived_key);
             }
         } else {
