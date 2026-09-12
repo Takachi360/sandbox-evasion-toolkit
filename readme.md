@@ -1,12 +1,12 @@
-# Payload & Evasion Generator
+# KRONOS - Dynamic Evasion & Execution-Stalling Test Framework
 
-A modular C-based framework designed for research and testing of execution delay techniques, system call hammering, anti-analysis routines, remote C2 key retrieval, and cryptographic operations.
+**KRONOS** is a modular C-based framework designed for research and academic evaluation of execution delay techniques, system call hammering, anti-analysis routines, remote C2 key retrieval, and dynamic cryptographic operations. Developed as part of a Master's Thesis (TFM).
 
 ===============================================================================
 1. REQUIREMENTS & DEPENDENCIES
 ===============================================================================
 
-To build and run this project, you need the following pre-requisites installed on your Linux system:
+To build and run KRONOS, you need the following pre-requisites installed on your Linux system:
 
 * GCC Compiler (gcc)
 * OpenSSL Library (libcrypto and libssl development headers)
@@ -15,11 +15,11 @@ To build and run this project, you need the following pre-requisites installed o
 * Standard C Library (glibc)
 
 Installing Dependencies (Ubuntu / Debian / Kali):
-  sudo apt update
-  sudo apt install build-essential libssl-dev zlib1g-dev
+    sudo apt update
+    sudo apt install build-essential libssl-dev zlib1g-dev
 
 Alternatively, you can install dependencies using the provided Makefile:
-  make deps
+    make deps
 
 
 ===============================================================================
@@ -44,7 +44,7 @@ Alternatively, you can install dependencies using the provided Makefile:
 ├── builder.c               # Dynamic payload builder implementation
 ├── builder.h               # Builder structures and prototypes
 ├── loader.c                # Final loader template source
-├── main.c                  # CLI entry point for generator (Single, Multi & Batch)
+├── main.c                  # KRONOS CLI entry point (Single, Multi & Batch)
 ├── Makefile                # Automated build, installation, and clean rules
 └── README.md
 
@@ -55,7 +55,7 @@ Alternatively, you can install dependencies using the provided Makefile:
 
 ### Using Makefile (Recommended):
 
-* Build the framework generator:
+* Build the KRONOS framework generator:
     make
 
 * Clean compiled binaries and temporary build files (`dist/`, `dist_batch/`, `payload.h`):
@@ -68,7 +68,7 @@ Alternatively, you can install dependencies using the provided Makefile:
 
 If compiling manually using GCC, ensure you include `-Iinclude` for headers and link required libraries:
 
-    gcc -Wall -Wextra -Wno-unused-variable -Iinclude main.c builder.c -o generator -lcrypto -lssl -lpthread -lm -lz
+    gcc -Wall -Wextra -Wno-unused-variable -Iinclude main.c builder.c -o kronos -lcrypto -lssl -lpthread -lm -lz
 
 
 ===============================================================================
@@ -76,13 +76,13 @@ If compiling manually using GCC, ensure you include `-Iinclude` for headers and 
 ===============================================================================
 
 1. Place your target raw ELF binary into the `payloads/` directory (e.g., `./payloads/stage1.elf`).
-2. Run the generator executable:
-    ./generator
+2. Launch the KRONOS interactive orchestrator:
+    ./kronos
 
 3. Select your desired execution mode in the CLI wizard:
 
    * **1) Single Stage:** Encrypts 1 ELF binary paired with 1 evasion technique. Output: `./dist/loader_final.elf`.
-   * **2) Multi-Stage:** Chains $N$ ELFs sequentially with derived keys per stage. Output: `./dist/loader_final.elf`.
+   * **2) Multi-Stage:** Chains N ELFs sequentially with derived keys per stage. Output: `./dist/loader_final.elf`.
    * **3) Batch Mode:** Automatically generates **36 individual binary loaders** (one per evasion technique) for automated sandbox evaluation and behavioral analysis. Output: `./dist_batch/loader_<technique_name>.elf`.
 
 
@@ -95,11 +95,11 @@ If compiling manually using GCC, ensure you include `-Iinclude` for headers and 
 * **Storage (301-307):** Disk walking, heavy I/O blips, entropy generation, sparse file creation, directory spamming, memory pressure, and VFS metadata querying (`stat`).
 * **Synchronization (401-407):** Thread joining, blocking queues, pipe waiting, semaphore racing, event waiting, barrier synchronization, and condition variables.
 * **Temporal (501-507):** Standard sleep, `select()`, `nanosleep()`, signal handling, subprocess waiting, `ppoll()`, and interval timers (`itimer`).
-* **Hammering (601-602):** WinAPI/Syscall hammering and memory allocation hammering.
+* **Hammering (601-602):** Syscall hammering and memory allocation hammering.
 
 
 ===============================================================================
 6. LICENSE & DISCLAIMER
 ===============================================================================
 
-Disclaimer: This project is intended strictly for educational purposes, security research, and defensive testing in controlled environments. Unauthorized use against target systems without consent is prohibited.
+Disclaimer: KRONOS is intended strictly for educational purposes, academic security research, and defensive testing in controlled environments. Unauthorized use against target systems without explicit consent is prohibited.
